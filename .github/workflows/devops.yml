@@ -57,8 +57,9 @@ jobs:
           host: ${{ vars.STAGING_SERVER_IP }}
           username: ${{ vars.STAGING_SERVER_USERNAME }}
           key: ${{ secrets.STAGING_SERVER_SSH_KEY }}
-          source: "docker-compose.staging.yaml"
-          target: dowa/docker-compose.yaml  # Rename it on the server
+          source: "docker-compose.yaml"
+          target: "dowa/"  # Just copy it into the directory
+      
       
       - name: Run Docker Compose on staging server 
         uses: appleboy/ssh-action@v1.2.1

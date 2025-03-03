@@ -58,7 +58,7 @@ jobs:
           username: ${{ vars.PRODUCTION_SERVER_USERNAME }}
           key: ${{ secrets.PRODUCTION_SERVER_SSH_KEY }}
           source: "docker-compose.production.yaml"
-          target: dowa/docker-compose.yaml  # Rename it on the server
+          target: "dowa/"  # Just copy it into the directory
       
       
       - name: Run Docker Compose on production server
