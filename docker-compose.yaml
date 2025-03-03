@@ -1,0 +1,6 @@
+﻿services:
+  web:
+    image: ghcr.io/kimi310/dev_ops_web_application:staging
+    ports:
+      - "8000:8080"
+    
