@@ -69,5 +69,7 @@ jobs:
           key: ${{ secrets. STAGING_SERVER_SSH_KEY }} 
           script: |
             cd dowa
+            mv docker-compose.staging.yaml docker-compose.yaml  # Rename it
+            ls -l
             docker compose pull
             docker compose up -d
