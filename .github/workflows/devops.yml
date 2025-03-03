@@ -29,13 +29,15 @@ jobs:
       # Build the Docker image
       - name: Build and Push Docker image
         run: |
+          REPO=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
           docker build \
-            -t ghcr.io/${{ github.repository }}:staging \
-            -t ghcr.io/${{ github.repository }}:${{ steps.semver-app.outputs.version }} \
+            -t ghcr.io/$REPO:staging \
+            -t ghcr.io/$REPO:${{ steps.semver-app.outputs.version }} \
             -f DevOpsWebApplication/Dockerfile \
             .
-          docker push ghcr.io/${{ github.repository }} --all-tags
-          
+          docker push ghcr.io/$REPO --all-tags
+      
+      
       - name: Create release notes
         uses: ncipollo/release-action@v1
         with:
