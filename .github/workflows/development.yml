@@ -1,4 +1,4 @@
-name: DevOps Pipeline
+﻿name: Production Deployment
 
 on:
   push:
@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  delivery:
+  deployment:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,7 +34,7 @@ jobs:
           echo "Pushing to ghcr.io/$REPO"
 
           docker build \
-            -t ghcr.io/$REPO:staging \
+            -t ghcr.io/$REPO:latest \
             -t ghcr.io/$REPO:${{ steps.semver-app.outputs.version }} \
             -f DevOpsWebApplication/Dockerfile \
             .
@@ -44,28 +44,29 @@ jobs:
       - name: Create release notes
         uses: ncipollo/release-action@v1
         with:
-            tag: ${{ steps.semver-app.outputs.version }}
-            generateReleaseNotes: true
-            body: |
-              This release includes the following container image:
-              http://ghcr.io/${{ github.repository }}:${{ steps.semver-app.outputs.version }}
-            skipIfReleaseExists: true  # Skip if release exists for the tag
-            
-      - name: Deliver Docker Compose file to staging
+          tag: ${{ steps.semver-app.outputs.version }}
+          generateReleaseNotes: true
+          body: |
+            This production release includes the following container image:
+            http://ghcr.io/${{ github.repository }}:${{ steps.semver-app.outputs.version }}
+          skipIfReleaseExists: true
+
+      - name: Deliver Docker Compose file to production
         uses: appleboy/scp-action@v0.1.7
         with:
-          host: ${{ vars.STAGING_SERVER_IP }}
-          username: ${{ vars.STAGING_SERVER_USERNAME }}
-          key: ${{ secrets.STAGING_SERVER_SSH_KEY }}
-          source: "docker-compose.staging.yaml"
+          host: ${{ vars.PRODUCTION_SERVER_IP }}
+          username: ${{ vars.PRODUCTION_SERVER_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SERVER_SSH_KEY }}
+          source: "docker-compose.production.yaml"
           target: dowa/docker-compose.yaml  # Rename it on the server
       
-      - name: Run Docker Compose on staging server 
+      
+      - name: Run Docker Compose on production server
         uses: appleboy/ssh-action@v1.2.1
         with:
-          host: ${{ vars. STAGING_SERVER_IP }}
-          username: ${{ vars.STAGING_SERVER_USERNAME}} 
-          key: ${{ secrets. STAGING_SERVER_SSH_KEY }} 
+          host: ${{ vars.PRODUCTION_SERVER_IP }}
+          username: ${{ vars.PRODUCTION_SERVER_USERNAME }}
+          key: ${{ secrets.PRODUCTION_SERVER_SSH_KEY }}
           script: |
             cd dowa
             docker compose pull
