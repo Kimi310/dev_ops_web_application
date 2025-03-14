@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+# Watch out :) This pipeline will run simulatanously with the other pipeline.
+# However if the other pipeline fails the code (i.e. unit tests or other tests) then this pipeline doesn't care and will deploy it never the less.
+# This video will give you a better approach to do this: https://easv.cloud.panopto.eu/Panopto/Pages/Viewer.aspx?id=fe4de310-fdfe-4f1d-9f96-b28b00babe6b
+# But besides this small problem I think you have done a great job with this pipeline 👍🏻
 jobs:
   deployment:
     runs-on: ubuntu-latest
@@ -27,6 +31,8 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Nice touch with the repo-naming :)
 
       - name: Build and Push Docker image
         run: |
